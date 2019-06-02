@@ -1,0 +1,1 @@
+This is a c++ implementation of the Neuroevolution of augmenting topologies algorithm developed by Ken Stanley
