@@ -3,9 +3,10 @@
 
 #define SHIFT_FACTOR 0.3
 #define RANDOM_FACTOR 1
+#define MUTATE_PROBABILITY 0.2
 
 
-genome::genome(std::vector<gene_node> n, std::vector<gene_connection> c) : nodes(n), connections(c) {}
+genome::genome(std::vector<gene_node*> n, std::vector<gene_connection> c) : nodes(n), connections(c) {}
 
 int genome::get_fitness() {
     return fitness;
@@ -102,7 +103,21 @@ genome genome::crossover(genome &g2) { //assuming g1.fitness > g2.fitness
 }
 
 void genome::mutate(std::vector<gene_node*> &all_nodes, std::vector<std::pair<int, int>> &connection_pairs) {
-
+    if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        mutate_link(connection_pairs);
+    }
+    if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        mutate_node(all_nodes, connection_pairs);
+    }
+    if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        mutate_weight_shift();
+    }
+    if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        mutate_weight_random();
+    }
+    if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        mutate_link_toggle();
+    }
 }
 
 void genome::mutate_link(std::vector<std::pair<int, int>> &connection_pairs) {
@@ -122,31 +137,44 @@ void genome::mutate_link(std::vector<std::pair<int, int>> &connection_pairs) {
         }
 
         std::pair<int, int> temp(a->get_id(), b->get_id());
-        int index = connection_pairs.size();
+        int connection_id = connection_pairs.size();
 
-        for(int i = 0; i < connection_pairs.size(); i++) {
-            if(connection_pairs.at(i) == temp) {
-                index = i;
+        for(int j = 0; j < connection_pairs.size(); j++) {
+            if(connection_pairs.at(j) == temp) {
+                connection_id = j;
                 break;
             }
         }
-        
-        if(index == -1) {
 
+        if(connection_id == connection_pairs.size()) {
+            connection_pairs.push_back(temp);
         }
 
-        for(int i = 0; i < connections.size(); i++) { //we must insert it in order of id, otherwise crossover and difference methods will break
-            if(connections.at(i).get_id() > index) {
-                connections.insert(i, gene_connection())
+        int insert_index = connections.size();
+        for(int j = 0; j < connections.size(); j++) { //we must insert it in order of id, otherwise crossover and difference methods will break
+            if(connections.at(j).get_id() > connection_id) {
+                insert_index = j;
             }
         }
-        
+        connections.insert(connections.begin() + insert_index, gene_connection(connection_id, a, b, (((double) rand() / (RAND_MAX)) * 2 - 1) * RANDOM_FACTOR));
         break;
     }
 }
 
-void genome::mutate_node(std::vector<gene_node*> &all_nodes) {
+void genome::mutate_node(std::vector<gene_node*> &all_nodes, std::vector<std::pair<int, int>> &connection_pairs) {
+    if(connections.empty()) {return;}
+    gene_connection connection = connections.at(rand() % connections.size());
+    connection.set_enabled(false);
+    gene_node *from = connection.get_from();
+    gene_node *to = connection.get_to();
+    gene_node *middle = new gene_node((from->get_value() + to->get_value()) / 2);
+    all_nodes.push_back(middle);
 
+    connections.push_back(gene_connection(connection_pairs.size(), from, middle, 1.0)); //add first new connection to current genome
+    connection_pairs.push_back(std::pair<int, int>(from->get_id(), middle->get_id())); //add first connection to list of all connections
+
+    connections.push_back(gene_connection(connection_pairs.size(), middle, to, connection.get_weight())); //add second new connection to current genome
+    connection_pairs.push_back(std::pair<int, int>(middle->get_id(), to->get_id())); //add second connection to list of all connections
 }
 
 void genome::mutate_weight_shift() {

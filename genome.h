@@ -12,20 +12,20 @@ private:
     int fitness;
 
     void mutate_link(std::vector<std::pair<int, int>> &connection_pairs);
-    void mutate_node(std::vector<gene_node*> &all_nodes);
+    void mutate_node(std::vector<gene_node*> &all_nodes, std::vector<std::pair<int, int>> &connection_pairs);
     void mutate_weight_shift();
     void mutate_weight_random();
     void mutate_link_toggle();
 
 public:
-    genome(std::vector<gene_node> n, std::vector<gene_connection> connections);
+    genome(std::vector<gene_node*> n, std::vector<gene_connection> connections);
 
     int get_fitness();
     void calculate_fitness();
     std::vector<double> feed_forward(std::vector<double> inputs);
     double difference(genome &g2);
     genome crossover(genome &g2);
-    void mutate(std::vector<gene_node> &all_nodes, std::vector<std::pair<int, int>> &connection_pairs);
+    void mutate(std::vector<gene_node*> &all_nodes, std::vector<std::pair<int, int>> &connection_pairs);
 };
 
 

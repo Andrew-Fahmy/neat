@@ -25,8 +25,7 @@ public:
 
 class gene_connection : public gene {
 private:
-    int counter;
-    const gene_node *from, *to;
+    gene_node *const from, *const to;
     double weight;
     bool enabled;
 
@@ -37,6 +36,8 @@ public:
     bool operator==(gene_connection &other);
     double get_weight();
     bool get_enabled();
+    gene_node *const get_from();
+    gene_node *const get_to();
     void set_weight(double w);
     void set_enabled(bool e);
 };
