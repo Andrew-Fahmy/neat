@@ -4,7 +4,7 @@ CXXFLAGS := -Wall -Werror
 BIN := main
 
 SRCS := $(wildcard *.cpp)
-OBJS := $(patsubst %.c, %.o, $(SRCS))
+OBJS := $(patsubst %.cpp, %.o, $(SRCS))
 
 all: $(BIN)
 

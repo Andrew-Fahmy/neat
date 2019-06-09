@@ -2,13 +2,16 @@
 
 class neat {
 private:
-    std::vector<gene_node*> nodes;
+    double max_fitness;
+    std::vector<gene_node> nodes;
     std::vector<std::pair<int, int>> connections;
-    std::vector<genome> genomes;
+    std::vector<genome> pool;
+    double (*fitness_func)(std::vector<double> (*func)(std::vector<double>));
+    
 
-public:
-    neat(int inputs, int outputs, int generations, int genomes);
     void reset(int inputs, int outputs, int population_size);
     void generation(int population_size);
-    void selection();
+
+public:
+    neat(int inputs, int outputs, int generations, int population_size, double (*fitness)(std::vector<double> (*func)(std::vector<double>)));
 };
