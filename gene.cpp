@@ -1,7 +1,7 @@
 #include "gene.h"
 
 gene::gene(int _id) : id(_id) {};
-gene_node::gene_node(double _position, node_type _type) : gene(counter++), position(_position), value(0), type(_type) {}
+gene_node::gene_node(double _position, node_type _type) : gene(counter++), value(0), position(_position), type(_type) {}
 gene_connection::gene_connection(int _id, gene_node *_from, gene_node *_to, double _weight) : gene(_id), from(_from), to(_to), weight(_weight), enabled(true) {}
 
 

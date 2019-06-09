@@ -1,12 +1,12 @@
 #include <iostream>
 #include "neat.h"
 
-double calc_fitness(std::vector<double> (*func)(std::vector<double>)) {
+double calc_fitness(genome g) {//std::vector<double> (genome::*func)(std::vector<double>)) {
     std::vector<double> input;
     input.push_back(1.0);
-    input.push_back(0.0);
+    input.push_back(0.1);
     std::vector<double> output;
-    output = func(input);
+    output = g.feed_forward(input);
     if(output.size() != 1) {
         std::cout << "output size error" << std::endl;
     }
@@ -18,6 +18,7 @@ double calc_fitness(std::vector<double> (*func)(std::vector<double>)) {
 }
 
 int main() {
-    neat n(2, 1, 100, 100, calc_fitness);
+    neat n(2, 1, 10, 10, calc_fitness);
+
     return 0;
 }

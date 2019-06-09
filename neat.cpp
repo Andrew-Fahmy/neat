@@ -3,7 +3,7 @@
 #include "neat.h"
 
 
-neat::neat(int inputs, int outputs, int generations, int population_size, double (*fitness)(std::vector<double> (*func)(std::vector<double>))) {
+neat::neat(int inputs, int outputs, int generations, int population_size, double (*fitness)(genome g)) {//(std::vector<double> (*func)(std::vector<double>))) {
     fitness_func = fitness;
     reset(inputs, outputs, population_size);
     for(int i = 0; i < generations; i++) {
@@ -34,18 +34,20 @@ bool compare_fitness(genome g1, genome g2) {
 }
 
 void neat::generation(int population_size) {
-    #define DIFFERENCE_FACTOR 1 //todo change to real value
+    #define DIFFERENCE_FACTOR 10000  //todo change to real value
     for(size_t i = 0; i < pool.size(); i++) {
-        //todo calculate fitness
-        pool.at(i).set_fitness(fitness_func(pool.at(i).feed_forward));
-        if(pool.at(i).get_fitness() > max_fitness) {
-            max_fitness = pool.at(i).get_fitness();
+        double fitness = fitness_func(pool.at(i));
+        std::cout << fitness << std::endl;
+        pool.at(i).set_fitness(fitness);
+        if(fitness > max_fitness) {
+            max_fitness = fitness;
         }
     }
 
     //seperate similar species into arrays
     std::vector<std::vector<genome>> species;
     for(size_t i = 0; i < pool.size(); i++) {
+        // std::cout << "size of " << pool.at(i).connections.size() << std::endl;
         bool placed = false;
         for(size_t j = 0; j < species.size(); j++) { //for all of the different species (currently)
             for (size_t k = 0; k < species.at(j).size(); k++) { //for all of the genomes in a specific species
@@ -84,5 +86,4 @@ void neat::generation(int population_size) {
             }
         }
     }
-    
 }

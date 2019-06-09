@@ -79,7 +79,7 @@ double genome::difference(genome& g2) {
 std::vector<double> genome::feed_forward(std::vector<double> inputs) {
     if(inputs.size() != input_nodes.size()) {
         std::cout << "invalid input size" << std::endl;
-        return;
+        throw("error");
     }
 
     for(size_t i = 0; i < input_nodes.size(); i++) {
@@ -153,28 +153,34 @@ genome genome::crossover(genome &g2) { //assuming g1.fitness > g2.fitness
 }
 
 void genome::mutate(std::vector<gene_node> &all_nodes, std::vector<std::pair<int, int>> &connection_pairs) {
+    // std::cout << "mutating" << std::endl;
     if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        // std::cout << "1" << std::endl;
         mutate_link(connection_pairs);
     }
     if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        // std::cout << "2" << std::endl;
         mutate_node(all_nodes, connection_pairs);
     }
     if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        // std::cout << "3" << std::endl;
         mutate_weight_shift();
     }
     if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        // std::cout << "4" << std::endl;
         mutate_weight_random();
     }
     if(((double) rand() / (RAND_MAX)) < MUTATE_PROBABILITY) {
+        // std::cout << "5" << std::endl;
         mutate_link_toggle();
     }
 }
 
 void genome::mutate_link(std::vector<std::pair<int, int>> &connection_pairs) {
-    std::vector<gene_node> all_nodes(input_nodes.size() + hidden_nodes.size() + output_nodes.size());
+    std::vector<gene_node> all_nodes;
     all_nodes.insert(all_nodes.end(), input_nodes.begin(), input_nodes.end());
     all_nodes.insert(all_nodes.end(), hidden_nodes.begin(), hidden_nodes.end());
-    all_nodes.insert(all_nodes.end(),output_nodes.begin(), output_nodes.end());
+    all_nodes.insert(all_nodes.end(), output_nodes.begin(), output_nodes.end());
     for(int i = 0; i < 50; i++) { //we allow up to 50 failed attempt before continuing
         gene_node *a = &all_nodes.at(rand() % all_nodes.size());
         gene_node *b = &all_nodes.at(rand() % all_nodes.size());

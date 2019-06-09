@@ -6,7 +6,7 @@
 #include "gene.h"
 
 class genome {
-private:
+public:
     double fitness;
     std::vector<gene_node> input_nodes;
     std::vector<gene_node> hidden_nodes;
